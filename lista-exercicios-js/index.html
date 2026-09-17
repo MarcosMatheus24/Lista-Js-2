@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Exercícios JavaScript - Prof. Celso Barreto</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Fontes do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col transition-colors duration-300 light:bg-slate-50 light:text-slate-800">
+
+  <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md px-4 lg:px-8 py-3 flex items-center justify-between light:bg-white/90 light:border-slate-200">
+    <div class="flex items-center gap-3">
+      <button id="toggleSidebarBtn" class="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white light:bg-slate-100 light:text-slate-700">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20">
+          JS
+        </div>
+        <div>
+          <h1 class="font-bold text-base md:text-lg leading-tight text-white light:text-slate-900">Exercícios JavaScript</h1>
+          <p class="text-xs text-slate-400">Prof. Celso Barreto • 50 Exercícios Práticos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações do Cabeçalho -->
+    <div class="flex items-center gap-2 md:gap-4">
+      <button id="runAllBtn" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md shadow-emerald-900/20 active:scale-95">
+        <i class="fa-solid fa-play"></i>
+        <span class="hidden sm:inline">Executar Todos os 50</span>
+        <span class="sm:hidden">Lote (50)</span>
+      </button>
+
+      <button id="themeToggleBtn" class="p-2.5 rounded-lg bg-slate-800 text-slate-300 hover:text-amber-400 transition-colors light:bg-slate-100 light:text-slate-700">
+        <i class="fa-solid fa-moon text-base" id="themeIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- Sidebar de Navegação -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-80 bg-slate-900/95 border-r border-slate-800 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static light:bg-white light:border-slate-200">
+      
+      <!-- Campo de Busca -->
+      <div class="p-4 border-b border-slate-800 light:border-slate-200">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+          <input type="text" id="searchInput" placeholder="Buscar por nº, título ou termo..." 
+            class="w-full pl-9 pr-3 py-2 text-sm bg-slate-800/80 border border-slate-700/60 rounded-lg text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500 transition-colors light:bg-slate-100 light:border-slate-300 light:text-slate-800">
+        </div>
+
+        <!-- Filtros por Bloco -->
+        <div class="flex gap-1 mt-3">
+          <button data-filter="all" class="filter-btn active flex-1 py-1 text-xs font-medium rounded-md bg-brand-600 text-white transition-colors">Todos</button>
+          <button data-filter="I" class="filter-btn flex-1 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700 transition-colors light:bg-slate-100 light:text-slate-600">Bloco I</button>
+          <button data-filter="II" class="filter-btn flex-1 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700 transition-colors light:bg-slate-100 light:text-slate-600">Bloco II</button>
+          <button data-filter="III" class="filter-btn flex-1 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700 transition-colors light:bg-slate-100 light:text-slate-600">Bloco III</button>
+        </div>
+      </div>
+
+      <!-- Barra de Progresso / Contador -->
+      <div class="px-4 py-2 bg-slate-950/50 border-b border-slate-800/80 flex items-center justify-between text-xs text-slate-400 light:bg-slate-50 light:border-slate-200">
+        <span>Questões visíveis: <strong id="visibleCount" class="text-brand-400">50</strong></span>
+        <span class="text-[11px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 light:bg-slate-200 light:text-slate-700">Total: 50</span>
+      </div>
+
+      <!-- Lista de Exercícios -->
+      <nav id="exerciseList" class="flex-1 overflow-y-auto p-2 space-y-1">
+        <!-- Renderizado dinamicamente via JS -->
+      </nav>
+
+    </aside>
+
+    <!-- Overlay mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/70 z-20 hidden lg:hidden"></div>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-950 light:bg-slate-50">
+      <div id="mainContainer" class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Estado Inicial: Card de Boas-Vindas ou Exercício Selecionado -->
+        <div id="welcomeCard" class="glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 space-y-4 light:bg-white light:border-slate-200 shadow-xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-semibold border border-brand-500/20">
+            <i class="fa-solid fa-graduation-cap"></i> Programação com JavaScript
+          </div>
+          <h2 class="text-2xl md:text-3xl font-bold text-white light:text-slate-900">Resolução dos 50 Exercícios Práticos</h2>
+          <p class="text-slate-300 light:text-slate-600 text-sm md:text-base leading-relaxed">
+            Selecione qualquer exercício no menu lateral para interagir com o seu formulário dinâmico, testar parâmetros customizados e analisar a solução em JavaScript limpa, comentada e com verificação de restrições de algoritmos.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 light:bg-slate-100 light:border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">I</div>
+                <div>
+                  <h4 class="font-semibold text-sm text-white light:text-slate-900">Bloco I: Condicionais</h4>
+                  <p class="text-xs text-slate-400">Questões 1 a 17</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 light:bg-slate-100 light:border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm">II</div>
+                <div>
+                  <h4 class="font-semibold text-sm text-white light:text-slate-900">Bloco II: Repetição</h4>
+                  <p class="text-xs text-slate-400">Questões 18 a 34</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 light:bg-slate-100 light:border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">III</div>
+                <div>
+                  <h4 class="font-semibold text-sm text-white light:text-slate-900">Bloco III: Vetores</h4>
+                  <p class="text-xs text-slate-400">Questões 35 a 50</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Painel Dinâmico da Questão Selecionada -->
+        <div id="exerciseCard" class="hidden glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6 light:bg-white light:border-slate-200 shadow-xl">
+          <!-- Cabeçalho do Exercício -->
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4 light:border-slate-200">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span id="exBadgeBlock" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                  Bloco I
+                </span>
+                <span id="exIdText" class="text-xs font-mono text-slate-400">Exercício #1</span>
+              </div>
+              <h2 id="exTitle" class="text-xl md:text-2xl font-bold text-white light:text-slate-900">
+                Título do Exercício
+              </h2>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button id="prevExBtn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1 transition-colors light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-700">
+                <i class="fa-solid fa-arrow-left"></i> Anterior
+              </button>
+              <button id="nextExBtn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1 transition-colors light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-700">
+                Próximo <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Situação-Problema & Requisitos -->
+          <div class="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800/60 light:bg-slate-50 light:border-slate-200">
+            <h3 class="text-sm font-semibold text-slate-200 light:text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-brand-400"></i> Situação-Problema & Contexto
+            </h3>
+            <p id="exDescription" class="text-xs md:text-sm text-slate-300 light:text-slate-600 leading-relaxed">
+              Descrição detalhada da situação-problema.
+            </p>
+            <div id="exRestrictions" class="text-xs text-amber-300/90 bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/20 hidden">
+              <!-- Restrições do algoritmo se houver -->
+            </div>
+          </div>
+
+          <!-- Formulário de Entrada -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-200 light:text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-brand-400"></i> Parâmetros de Entrada
+              </h3>
+              <button id="fillExampleBtn" class="text-xs text-brand-400 hover:text-brand-300 underline flex items-center gap-1">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Usar Valores de Exemplo
+              </button>
+            </div>
+
+            <div id="formInputsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Inputs gerados dinamicamente -->
+            </div>
+
+            <button id="runSingleBtn" class="w-full py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-600/20 active:scale-[0.99] flex items-center justify-center gap-2">
+              <i class="fa-solid fa-play"></i> Executar Exercício em JavaScript
+            </button>
+          </div>
+
+          <!-- Resultado Formatado -->
+          <div id="resultContainer" class="space-y-3 hidden">
+            <h3 class="text-sm font-semibold text-slate-200 light:text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-square-poll-vertical text-emerald-400"></i> Resultado & Retorno do Algoritmo
+            </h3>
+            <div id="resultOutput" class="p-4 rounded-xl bg-slate-900 border border-slate-800 light:bg-slate-100 light:border-slate-200 font-mono text-xs md:text-sm text-slate-200 light:text-slate-800 whitespace-pre-wrap leading-relaxed">
+              <!-- Resultado -->
+            </div>
+          </div>
+
+          <!-- Acordeão Código Fonte JS -->
+          <div class="border-t border-slate-800 pt-4 light:border-slate-200">
+            <button id="toggleCodeBtn" class="w-full flex items-center justify-between py-2 text-xs md:text-sm font-semibold text-slate-300 hover:text-white light:text-slate-700 transition-colors">
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-code text-indigo-400"></i> Ver Código Fonte JS (Fiel aos Requisitos)
+              </span>
+              <i id="toggleCodeIcon" class="fa-solid fa-chevron-down transition-transform"></i>
+            </button>
+            
+            <div id="codeAccordion" class="hidden mt-3">
+              <pre class="p-4 rounded-xl bg-slate-950 border border-slate-800/90 text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed code-scroll light:bg-slate-900"><code id="codeBlock">
+// Código JavaScript da questão
+              </code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Painel de Execução em Lote (Batch Run) -->
+        <div id="batchPanel" class="hidden glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6 light:bg-white light:border-slate-200 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4 light:border-slate-200">
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-white light:text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-microchip text-emerald-400"></i> Relatório de Testes Automatizados (50 Exercícios)
+              </h2>
+              <p class="text-xs md:text-sm text-slate-400">Execução em lote de todos os exercícios com valores de validação predefinidos.</p>
+            </div>
+            <button id="startBatchBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs md:text-sm px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+              <i class="fa-solid fa-rotate-right"></i> Re-executar Todos
+            </button>
+          </div>
+
+          <!-- Estatísticas do Lote -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center light:bg-slate-100 light:border-slate-200">
+              <div class="text-2xl font-bold text-emerald-400" id="batchTotal">50</div>
+              <div class="text-xs text-slate-400">Total de Testes</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center light:bg-slate-100 light:border-slate-200">
+              <div class="text-2xl font-bold text-emerald-400" id="batchPassed">50</div>
+              <div class="text-xs text-slate-400">Sucessos</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center light:bg-slate-100 light:border-slate-200">
+              <div class="text-2xl font-bold text-amber-400" id="batchFailed">0</div>
+              <div class="text-xs text-slate-400">Falhas</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center light:bg-slate-100 light:border-slate-200">
+              <div class="text-2xl font-bold text-brand-400" id="batchTime">0ms</div>
+              <div class="text-xs text-slate-400">Tempo Total</div>
+            </div>
+          </div>
+
+          <!-- Tabela Consolidada -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/60 text-slate-400 light:bg-slate-100 light:border-slate-200">
+                  <th class="p-3">Ex #</th>
+                  <th class="p-3">Título / Bloco</th>
+                  <th class="p-3">Entradas de Teste</th>
+                  <th class="p-3">Retorno Sintetizado</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="batchTableBody" class="divide-y divide-slate-800/60 light:divide-slate-200">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
